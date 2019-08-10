@@ -1,0 +1,17 @@
+default_config:
+logger:
+  default: error
+  logs:
+    custom_components.emby_upcoming_media: debug
+
+sensor:
+  - platform: emby_upcoming_media
+    api_key: !secret emby_api_key
+    user_id: !secret emby_user_id
+    port: 443
+    host: !secret emby_host
+    ssl: True
+    max: 5
+    include:
+      - Movies
+      - TV Shows
