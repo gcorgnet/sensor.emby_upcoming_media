@@ -17,7 +17,7 @@ This component does not require, nor conflict with, the default [Emby](https://w
 | key | default | required | description
 | --- | --- | --- | ---
 | api_key | | yes | Your Emby API key
-| user_id | | yes | The id of the user you want to impersonate. (The lists that get retrieved depend on what that user has access to)
+| user_id | | yes | The id of the user you want to impersonate. Note: this is an id, not a username. Spy on Emby API calls to retrieve yours. </br>(The Libraries and Medias that get retrieved depend on what that user has access to)
 | host | localhost | no | The host Emby is running on.
 | port | 8096 | no | The port Emby is running on.
 | ssl | false | no | Whether or not to use SSL for Emby.
