@@ -142,9 +142,12 @@ class EmbyUpcomingMediaSensor(Entity):
 
             card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
 
-            timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
+            if "RunTimeTicks" in show:
+                timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
+                card_item["runtime"] = timeobject.total_seconds() / 60
+            else:
+                card_item["runtime"] = ""
 
-            card_item["runtime"] = timeobject.total_seconds() / 60
             if "ParentIndexNumber" and "IndexNumber" in show:
                 card_item["number"] = "S{:02d}E{:02d}".format(
                     show["ParentIndexNumber"], show["IndexNumber"]
