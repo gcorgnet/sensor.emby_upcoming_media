@@ -1,4 +1,4 @@
-# Emby Upcoming Media Component
+# Emby Latest Media Component
 
 Home Assistant component to feed [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card) with
 the latest releases on an Emby instance.</br>
