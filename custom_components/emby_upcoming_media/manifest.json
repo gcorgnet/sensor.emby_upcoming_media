@@ -6,6 +6,5 @@
   "codeowners": [
     "@gcorgnet"
   ],
-  "requirements": [],
-  "homeassistant": "0.96.0"
+  "requirements": []
 }
