@@ -110,7 +110,7 @@ class EmbyUpcomingMediaSensor(Entity):
 
     @property
     def name(self):
-        return "Latetst {0} on Emby".format(self.category_name)
+        return "Latest {0} on Emby".format(self.category_name)
 
     @property
     def state(self):
