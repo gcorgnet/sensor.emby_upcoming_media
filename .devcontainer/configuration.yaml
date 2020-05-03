@@ -15,3 +15,5 @@ sensor:
     include:
       - Movies
       - TV Shows
+      - Kids Movies [EN]
+      - Kids Movies [FR]

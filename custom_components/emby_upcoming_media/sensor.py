@@ -100,11 +100,11 @@ class EmbyUpcomingMediaSensor(Entity):
         self.data = []
         self.category_name = conf.get(CATEGORY_NAME)
         self.category_id = conf.get(CATEGORY_ID)
-        self.friendly_name = "Emby Upcoming Media " + self.category_name
+        self.friendly_name = "Emby Latest Media " + self.category_name
         self.entity_id = sensor.ENTITY_ID_FORMAT.format(
             "emby_latest_"
             + re.sub(
-                "\W+", "_", self.category_name
+                "\_$", "", re.sub("\W+", "_", self.category_name)
             ).lower()  # remove special characters
         )
 
