@@ -24,6 +24,7 @@ This component does not require, nor conflict with, the default [Emby](https://w
 | port | 8096 | no | The port Emby is running on.
 | ssl | false | no | Whether or not to use SSL for Emby.
 | max | 5 | no | Max number of items in sensor.
+| use_backdrop | false | no | Defines whether to use the Backdrop Image, instead of the poster. (Great for using with the `fanart` display mode)
 | include| | no | The names or the Emby Libraries you want to include. If not specified, all libraries will be shown and this component will create one sensor per Library
 </br>
 
@@ -39,7 +40,8 @@ sensor:
   port: 8096
   ssl: True
   max: 5
-    include:
+  use_backdrop: true
+  include:
     - Movies
     - TV Shows
 ```

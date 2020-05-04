@@ -42,7 +42,7 @@ class EmbyClient:
 
     def get_data(self, categoryId):
         try:
-            url = "http{0}://{1}:{2}/Users/{3}/Items/Latest?Limit={4}&Fields=CommunityRating&ParentId={5}&api_key={6}".format(
+            url = "http{0}://{1}:{2}/Users/{3}/Items/Latest?Limit={4}&Fields=CommunityRating,Studios,PremiereDate,Genres&ParentId={5}&api_key={6}&GroupItems=false".format(
                 self.ssl,
                 self.host,
                 self.port,
@@ -69,8 +69,8 @@ class EmbyClient:
 
         return self.data[categoryId]
 
-    def get_image_url(self, itemId, tag):
-        url = "http{0}://{1}:{2}/Items/{3}/Images/Primary?maxHeight=253&maxWidth=169&tag={4}&quality=90".format(
-            self.ssl, self.host, self.port, itemId, tag
+    def get_image_url(self, itemId, imageType):
+        url = "http{0}://{1}:{2}/Items/{3}/Images/{4}?maxHeight=360&maxWidth=640&quality=90".format(
+            self.ssl, self.host, self.port, itemId, imageType
         )
         return url
