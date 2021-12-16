@@ -65,7 +65,7 @@ sensor:
 ### Sample for ui-lovelace.yaml:
 
     - type: custom:upcoming-media-card
-      entity: sensor.sensor.emby_latest_movies
+      entity: sensor.emby_latest_movies
       title: Latest Movies
 
 
