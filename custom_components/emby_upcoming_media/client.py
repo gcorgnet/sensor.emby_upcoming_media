@@ -25,7 +25,8 @@ class EmbyClient:
             url = "http{0}://{1}:{2}/Users/{3}/Views".format(
                 self.ssl, self.host, self.port, self.user_id
             )
-            _LOGGER.info("Making API call on URL %s", url)
+            _LOGGER.info("Making API call to Emby", url)
+            _LOGGER.debug("API call on URL %s", url)
             api = requests.get(url, timeout=10)
         except OSError:
             _LOGGER.warning("Host %s is not available", self.host)
@@ -52,7 +53,8 @@ class EmbyClient:
                 categoryId,
                 self.api_key,
             )
-            _LOGGER.info("Making API call on URL %s", url)
+            _LOGGER.info("Making API call to Emby", url)
+            _LOGGER.debug("API call on URL %s", url)
             api = requests.get(url, timeout=10)
         except OSError:
             _LOGGER.warning("Host %s is not available", self.host)
