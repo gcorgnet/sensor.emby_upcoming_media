@@ -1,6 +1,6 @@
 # Emby Latest Media Component
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
 Home Assistant component to feed [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card) with
 the latest releases on an Emby instance.</br>
