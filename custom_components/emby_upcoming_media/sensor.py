@@ -31,7 +31,7 @@ DOMAIN = "emby_upcoming_media"
 DOMAIN_DATA = f"{DOMAIN}_data"
 ATTRIBUTION = "Data is provided by Emby."
 
-DICT_LIBRARY_TYPES = {"tvshows": "TV Shows", "movies": "Movies"}
+DICT_LIBRARY_TYPES = {"tvshows": "TV Shows", "movies": "Movies", "music": "Music"}
 
 # Configuration
 CONF_SENSOR = "sensor"
@@ -50,9 +50,11 @@ CATEGORY_TYPE = "CollectionType"
 
 SCAN_INTERVAL_SECONDS = 3600  # Scan once per hour
 
-TV_DEFAULT = {"title_default": "$title", "line1_default": "$episode", "line2_default": "$release", "line3_default": "$rating - $runtime", "line4_default": "$number - $studio", "icon": "mdi:arrow-down-bold"}
-MOVIE_DEFAULT = {"title_default": "$title", "line1_default": "$release", "line2_default": "$genres", "line3_default": "$rating - $runtime", "line4_default": "$studio", "icon": "mdi:arrow-down-bold"}
-OTHER_DEFAULT = {"title_default": "$title", "line1_default": "$number - $studio", "line2_default": "$aired", "line3_default": "$episode", "line4_default": "$rating - $runtime", "icon": "mdi:arrow-down-bold"}
+TV_DEFAULT = {"title_default": "$title", "line1_default": "$release", "line2_default": "$number", "line3_default": "$episode", "line4_default": "Runtime: $runtime", "icon": "mdi:arrow-down-bold"}
+TV_ALTERNATE = {"title_default": "$title", "line1_default": "$release • $number", "line2_default": "Average Runtime: $runtime", "line3_default": "$genres", "line4_default": "$rating", "icon": "mdi:arrow-down-bold"}
+MOVIE_DEFAULT = {"title_default": "$title", "line1_default": "$release", "line2_default": "Runtime: $runtime", "line3_default": "$genres", "line4_default": "$rating", "icon": "mdi:arrow-down-bold"}
+MUSIC_DEFAULT = {"title_default": "$title", "line1_default": "$studio • $release", "line2_default": "Runtime: $runtime", "line3_default": "$genres", "line4_default": "", "icon": "mdi:arrow-down-bold"}
+OTHER_DEFAULT = {"title_default": "$title", "line1_default": "$release", "line2_default": "Runtime: $runtime", "line3_default": "$genres", "line4_default": "$studio", "icon": "mdi:arrow-down-bold"}
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -137,7 +139,7 @@ class EmbyUpcomingMediaSensor(Entity):
     def state(self):
         return self._state
 
-    def handle_tv_show(self):
+    def handle_tv_episodes(self):
         """Return the state attributes."""
 
         attributes = {}
@@ -154,6 +156,11 @@ class EmbyUpcomingMediaSensor(Entity):
 
             card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
 
+            if "PremiereDate" in show:
+                card_item["release"] = dateutil.parser.isoparse(show.get("PremiereDate", "")).year
+            else:
+                card_item["release"] = ""
+
             if "RunTimeTicks" in show:
                 timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
                 card_item["runtime"] = timeobject.total_seconds() / 60
@@ -164,16 +171,72 @@ class EmbyUpcomingMediaSensor(Entity):
                 card_item["number"] = "S{:02d}E{:02d}".format(
                     show["ParentIndexNumber"], show["IndexNumber"]
                 )
+            elif "ParentIndexNumber" in show and "IndexNumber" not in show:
+                card_item["number"] = "Season {:d} Special".format(
+                    show["ParentIndexNumber"]
+                )
 
             if "ParentBackdropItemId" in show:
                 card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
                     show["ParentBackdropItemId"], "Backdrop" if self.use_backdrop else "Primary"
                 )
 
+            card_json.append(card_item)
+
+        attributes["data"] = json.dumps(card_json)
+        attributes["attribution"] = ATTRIBUTION
+
+        return attributes
+
+    def handle_tv_show(self):
+        """Return the state attributes."""
+
+        attributes = {}
+        default = TV_ALTERNATE
+        card_json = []
+
+        card_json.append(default)
+
+        for show in self.data:
+
+            card_item = {}
+            card_item["title"] = show["Name"]
+            card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
+
+            if "PremiereDate" in show:
+                card_item["release"] = dateutil.parser.isoparse(show.get("PremiereDate", "")).year
+
+            if show["ChildCount"] > 1:
+                card_item['number'] = "{0} seasons".format(
+                    show["ChildCount"]
+                )
+            else:
+                card_item['number'] = "{0} season".format(
+                    show["ChildCount"]
+                )
+
+            if "RunTimeTicks" in show:
+                timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
+                card_item["runtime"] = timeobject.total_seconds() / 60
+            else:
+                card_item["runtime"] = ""
+
+            if "Genres" in show:
+                card_item["genres"] = ", ".join(show["Genres"][:3])
+
+            if "ParentIndexNumber" and "IndexNumber" in show:
+                card_item["number"] = "S{:02d}E{:02d}".format(
+                    show["ParentIndexNumber"], show["IndexNumber"]
+                )
+
             if "CommunityRating" in show:
-                card_item["rating"] = "%s %s" % (
+                card_item["rating"] = "%s %.1f" % (
                     "\u2605",  # Star character
                     show.get("CommunityRating", ""),
+                )
+
+            card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
+                show["Id"], "Backdrop" if self.use_backdrop else "Primary"
                 )
 
             card_json.append(card_item)
@@ -196,20 +259,10 @@ class EmbyUpcomingMediaSensor(Entity):
 
             card_item = {}
             card_item["title"] = show["Name"]
-
-            card_item["officialrating"] = show.get("OfficialRating", "")
+            card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
 
             if "PremiereDate" in show:
                 card_item["release"] = dateutil.parser.isoparse(show.get("PremiereDate", "")).year
-
-            card_item["airdate"] = datetime.now().isoformat()
-
-            if "Studios" in show and len(show["Studios"]) > 0:
-                card_item["studio"] = show["Studios"][0]["Name"]
-
-
-            if "Genres" in show:
-                card_item["genres"] = ", ".join(show["Genres"])
 
             if "RunTimeTicks" in show:
                 timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
@@ -217,13 +270,71 @@ class EmbyUpcomingMediaSensor(Entity):
             else:
                 card_item["runtime"] = ""
 
+            if "Genres" in show:
+                card_item["genres"] = ", ".join(show["Genres"][:3])
+
+            if "Studios" in show and len(show["Studios"]) > 0:
+                card_item["studio"] = show["Studios"][0]["Name"]
+
+            card_item["rating"] = "%s %.1f" % (
+                "\u2605",  # Star character
+                show.get("CommunityRating", ""),
+            )
+
             card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
                 show["Id"], "Backdrop" if self.use_backdrop else "Primary"
             )
 
+            card_json.append(card_item)
+
+        attributes["data"] = json.dumps(card_json)
+        attributes["attribution"] = ATTRIBUTION
+
+        return attributes
+
+    def handle_music(self):
+        """Return the state attributes."""
+
+        attributes = {}
+        default = MUSIC_DEFAULT
+        card_json = []
+
+        card_json.append(default)
+
+        for show in self.data:
+
+            card_item = {}
+            card_item["title"] = show["Name"]
+            card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
+
+            if "Artists" in show and len(show["Artists"]) > 0:
+                card_item["studio"] = ", ".join(show["Artists"][:3])
+
+            if "RunTimeTicks" in show:
+                timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
+                card_item["runtime"] = timeobject.total_seconds() / 60
+            else:
+                card_item["runtime"] = ""
+
+            if "Genres" in show:
+                card_item["genres"] = ", ".join(show["Genres"][:3])
+
+            card_item["release"] = show.get("ProductionYear", "")
+            
+            if "ParentIndexNumber" in show and "IndexNumber" in show:
+                card_item["number"] = "S{:02d}E{:02d}".format(
+                    show["ParentIndexNumber"], show["IndexNumber"]
+                )
+            else:
+                card_item["number"] = show.get("ProductionYear", "")
+
             card_item["rating"] = "%s %s" % (
                 "\u2605",  # Star character
                 show.get("CommunityRating", ""),
+            )
+
+            card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
+                show["Id"], "Primary"
             )
 
             card_json.append(card_item)
@@ -244,9 +355,13 @@ class EmbyUpcomingMediaSensor(Entity):
         if len(self.data) == 0:
             return attributes
         elif self.data[0]["Type"] == "Episode":
+            return self.handle_tv_episodes()
+        elif self.data[0]["Type"] == "Series":
             return self.handle_tv_show()
         elif self.data[0]["Type"] == "Movie":
             return self.handle_movie()
+        elif self.data[0]["Type"] == "MusicAlbum" or "Audio":
+            return self.handle_music()
         else:
             card_json.append(default)
 
@@ -255,17 +370,22 @@ class EmbyUpcomingMediaSensor(Entity):
 
                 card_item = {}
                 card_item["title"] = show["Name"]
+                card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
 
                 card_item["episode"] = show.get("OfficialRating", "")
                 card_item["officialrating"] = show.get("OfficialRating", "")
 
-                card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
+                if "Genres" in show:
+                    card_item["genres"] = ", ".join(show["Genres"][:3])
 
                 if "RunTimeTicks" in show:
                     timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
                     card_item["runtime"] = timeobject.total_seconds() / 60
                 else:
                     card_item["runtime"] = ""
+
+                if "Artists" in show and len(show["Artists"]) > 0:
+                    card_item["studio"] = ", ".join(show["Artists"][:3])
 
                 if "ParentIndexNumber" in show and "IndexNumber" in show:
                     card_item["number"] = "S{:02d}E{:02d}".format(
@@ -275,7 +395,7 @@ class EmbyUpcomingMediaSensor(Entity):
                     card_item["number"] = show.get("ProductionYear", "")
 
                 card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
-                    show["Id"], "Backdrop" if self.use_backdrop else "Primary"
+                    show["Id"], "Primary"
                 )
 
                 card_item["rating"] = "%s %s" % (
