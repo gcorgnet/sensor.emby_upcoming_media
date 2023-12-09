@@ -25,13 +25,14 @@ This component does not require, nor conflict with, the default [Emby](https://w
 | ssl | false | no | Whether or not to use SSL for Emby.
 | max | 5 | no | Max number of items in sensor.
 | use_backdrop | false | no | Defines whether to use the Backdrop Image, instead of the poster. (Great for using with the `fanart` display mode)
-| include| | no | The names of the <strong>Emby Libraries</strong> you want to include. If not specified, all libraries will be shown and this component will create one sensor per Library. This is language specific.
-| group_libraries| false| no | This option generates only two sensors (emby_latest_movies / emby_latest_tv_shows), grouping all your movies and tv into seperate sensors despite library setup in Emby. </br>This is useful for when Emby has many libraries but you only want one sensor in Home Assistant 
+| include | | no | The names of the <strong>Emby Libraries</strong> you want to include. If not specified, all libraries will be shown and this component will create one sensor per Library. This is language specific.
+| group_libraries | false | no | This option generates only two sensors (emby_latest_movies / emby_latest_tv_shows), grouping all your movies and tv into seperate sensors despite library setup in Emby. </br>This is useful for when Emby has many libraries but you only want one sensor in Home Assistant.
+| episodes | true | no | Setting this to false will change the items shown from Episodes to Seasons (for tv show libraries) and Songs to Albums (for music libraries).
 </br>
 
 **Do not just copy examples, please use config options above to build your own!**
 ### Sample for configuration.yaml:
-> This will add items from the 'Movies', 'Kids Movies' and 'Tv Shows' Libraries in Emby, creating a seperate sensor per library
+> This will add items from the 'Movies', 'Kids Movies', 'TV Shows' and 'Music' Libraries in Emby, as well as show seasons and albums for their respective libraries, creating a seperate sensor per library
 ```
 sensor:
 - platform: emby_upcoming_media
@@ -43,10 +44,12 @@ sensor:
   max: 5
   use_backdrop: true
   group_libraries: false
+  episodes: false
   include:
     - Movies
     - Kids Movies
     - TV Shows
+    - Music
 ```
 
 > This will add all items Emby and create one sensor for movies (emby_latest_movies) and one for tv (emby_latest_tv_shows)
