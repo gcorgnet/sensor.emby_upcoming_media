@@ -42,6 +42,7 @@ CONF_MAX = "max"
 CONF_USER_ID = "user_id"
 CONF_USE_BACKDROP = "use_backdrop"
 CONF_GROUP_LIBRARIES = "group_libraries"
+CONF_EPISODES = "episodes"
 
 CATEGORY_NAME = "CategoryName"
 CATEGORY_ID = "CategoryId"
@@ -68,7 +69,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_INCLUDE, default=[]): vol.All(cv.ensure_list),
         vol.Optional(CONF_MAX, default=5): cv.Number,
         vol.Optional(CONF_USE_BACKDROP, default=False): cv.boolean,
-        vol.Optional(CONF_GROUP_LIBRARIES, default=False): cv.boolean
+        vol.Optional(CONF_GROUP_LIBRARIES, default=False): cv.boolean,
+        vol.Optional(CONF_EPISODES, default=True): cv.boolean
     }
 )
 
@@ -86,9 +88,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     max_items = config.get(CONF_MAX)
     user_id = config.get(CONF_USER_ID)
     include = config.get(CONF_INCLUDE)
+    show_episodes = config.get(CONF_EPISODES)
 
     # Configure the client.
-    client = EmbyClient(host, api_key, ssl, port, max_items, user_id)
+    client = EmbyClient(host, api_key, ssl, port, max_items, user_id, show_episodes)
     hass.data[DOMAIN_DATA]["client"] = client
 
     categories = client.get_view_categories()
