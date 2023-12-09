@@ -42,7 +42,7 @@ CONF_MAX = "max"
 CONF_USER_ID = "user_id"
 CONF_USE_BACKDROP = "use_backdrop"
 CONF_GROUP_LIBRARIES = "group_libraries"
-CONF_EPISODES = "show_episodes"
+CONF_EPISODES = "episodes"
 
 CATEGORY_NAME = "CategoryName"
 CATEGORY_ID = "CategoryId"
