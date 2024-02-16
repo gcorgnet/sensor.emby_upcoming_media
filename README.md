@@ -1,4 +1,4 @@
-# Emby Latest Media (2024) Component
+# Emby Latest Media Component
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
