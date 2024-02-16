@@ -4,7 +4,7 @@
   "documentation": "https://github.com/xlyralycanx/sensor.emby_upcoming_media",
   "dependencies": [],
   "codeowners": [
-    "@gcorgnet", "@xlyralycanx",
+    "@gcorgnet", "@xlyralycanx"
   ],
   "requirements": ["python-dateutil"],
   "version": "0.4"
