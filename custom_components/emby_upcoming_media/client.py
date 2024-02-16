@@ -23,8 +23,8 @@ class EmbyClient:
     def get_view_categories(self):
         """This will pull the list of all View Categories on Emby"""
         try:
-            url = "http{0}://{1}:{2}/Users/{3}/Views".format(
-                self.ssl, self.host, self.port, self.user_id
+            url = "http{0}://{1}:{2}/Users/{3}/Views?api_key={4}".format(
+                self.ssl, self.host, self.port, self.user_id, self.api_key
             )
             _LOGGER.info("Making API call on URL %s", url)
             api = requests.get(url, timeout=10)
