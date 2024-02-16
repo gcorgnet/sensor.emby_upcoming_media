@@ -129,8 +129,7 @@ class EmbyUpcomingMediaSensor(Entity):
         self.friendly_name = "Emby Latest Media " + self.category_name
         self.entity_id = sensor.ENTITY_ID_FORMAT.format(
             "emby_latest_"
-            + re.sub(
-                "\_$", "", re.sub("\W+", "_", self.category_name)
+            + re.sub(r"\_$", "", re.sub(r"\W+", "_", self.category_name)
             ).lower()  # remove special characters
         )
 
@@ -233,9 +232,9 @@ class EmbyUpcomingMediaSensor(Entity):
                 )
 
             if "CommunityRating" in show:
-                card_item["rating"] = "%s %.1f" % (
-                    "\u2605",  # Star character
-                    show.get("CommunityRating", ""),
+                card_item["rating"] = "{} {:.1f}".format(
+                    "\u2605", # Star character
+                    show.get("CommunityRating", ''),
                 )
 
             card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
@@ -279,10 +278,11 @@ class EmbyUpcomingMediaSensor(Entity):
             if "Studios" in show and len(show["Studios"]) > 0:
                 card_item["studio"] = show["Studios"][0]["Name"]
 
-            card_item["rating"] = "%s %.1f" % (
-                "\u2605",  # Star character
-                show.get("CommunityRating", ""),
-            )
+            if "CommunityRating" in show:
+                card_item["rating"] = "{} {:.1f}".format(
+                    "\u2605", # Star character
+                    show.get("CommunityRating", ''),
+                )
 
             card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
                 show["Id"], "Backdrop" if self.use_backdrop else "Primary"
@@ -331,10 +331,11 @@ class EmbyUpcomingMediaSensor(Entity):
             else:
                 card_item["number"] = show.get("ProductionYear", "")
 
-            card_item["rating"] = "%s %s" % (
-                "\u2605",  # Star character
-                show.get("CommunityRating", ""),
-            )
+            if "CommunityRating" in show:
+                card_item["rating"] = "{} {:.1f}".format(
+                    "\u2605", # Star character
+                    show.get("CommunityRating", ''),
+                )
 
             card_item["poster"] = self.hass.data[DOMAIN_DATA]["client"].get_image_url(
                 show["Id"], "Primary"
