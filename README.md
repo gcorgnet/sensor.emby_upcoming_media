@@ -10,7 +10,7 @@ This component does not require, nor conflict with, the default [Emby](https://w
 
 ## Installation:
 
-1. Install this component by copying [these files](https://github.com/xlyralycanx/sensor.emby_upcoming_media/tree/master/custom_components/emby_upcoming_media) to `/custom_components/emby_upcoming_media/`.
+1. Install this component by copying [these files](https://github.com/gcorgnet/sensor.emby_upcoming_media/tree/master/custom_components/emby_upcoming_media) to `/custom_components/emby_upcoming_media/`.
 2. Install the card: [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card)
 3. Add the code to your `configuration.yaml` using the config options below.
 4. Add the code for the card to your lovelace configuration.
