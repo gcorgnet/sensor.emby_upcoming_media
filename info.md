@@ -14,4 +14,5 @@ This component does not require, nor conflict with, the default [Emby](https://w
 | max | 5 | no | Max number of items in sensor.
 | use_backdrop | false | no | Defines whether to use the Backdrop Image, instead of the poster. (Great for using with the `fanart` display mode)
 | include| | no | The names of the <strong>Emby Libraries</strong> you want to include. If not specified, all libraries will be shown and this component will create one sensor per Library. This is language specific.
-| group_libraries| false| no | This option generates only two sensors (emby_latest_movies / emby_latest_tv_shows), grouping all your movies and tv into seperate sensors despite library setup in Emby. </br>This is useful for when Emby has many libraries but you only want one sensor in Home Assistant 
+| group_libraries| false| no | This option generates only two sensors (emby_latest_movies / emby_latest_tv_shows), grouping all your movies and tv into seperate sensors despite library setup in Emby. </br>This is useful for when Emby has many libraries but you only want one sensor in Home Assistant.
+| episodes | true | no | Setting this to false will change the items shown from Episodes to Seasons (for tv show libraries) and Songs to Albums (for music libraries).

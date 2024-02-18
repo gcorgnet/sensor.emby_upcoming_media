@@ -9,7 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 class EmbyClient:
     """Client class"""
 
-    def __init__(self, host, api_key, ssl, port, max_items, user_id):
+    def __init__(self, host, api_key, ssl, port, max_items, user_id, show_episodes):
         """Init."""
         self.data = {}
         self.host = host
@@ -18,15 +18,15 @@ class EmbyClient:
         self.api_key = api_key
         self.user_id = user_id
         self.max_items = max_items
+        self.show_episodes = "&GroupItems=False" if show_episodes else ""
 
     def get_view_categories(self):
         """This will pull the list of all View Categories on Emby"""
         try:
-            url = "http{0}://{1}:{2}/Users/{3}/Views".format(
-                self.ssl, self.host, self.port, self.user_id
+            url = "http{0}://{1}:{2}/Users/{3}/Views?api_key={4}".format(
+                self.ssl, self.host, self.port, self.user_id, self.api_key
             )
-            _LOGGER.info("Making API call to Emby", url)
-            _LOGGER.debug("API call on URL %s", url)
+            _LOGGER.info("Making API call on URL %s", url)
             api = requests.get(url, timeout=10)
         except OSError:
             _LOGGER.warning("Host %s is not available", self.host)
@@ -44,7 +44,7 @@ class EmbyClient:
 
     def get_data(self, categoryId):
         try:
-            url = "http{0}://{1}:{2}/Users/{3}/Items/Latest?Limit={4}&Fields=CommunityRating,Studios,PremiereDate,Genres,DateCreated&ParentId={5}&api_key={6}&GroupItems=false".format(
+            url = "http{0}://{1}:{2}/Users/{3}/Items/Latest?Limit={4}&Fields=CommunityRating,Studios,PremiereDate,Genres,ChildCount,ProductionYear,DateCreated&ParentId={5}&api_key={6}{7}".format(
                 self.ssl,
                 self.host,
                 self.port,
@@ -52,9 +52,9 @@ class EmbyClient:
                 self.max_items,
                 categoryId,
                 self.api_key,
+                self.show_episodes,
             )
-            _LOGGER.info("Making API call to Emby", url)
-            _LOGGER.debug("API call on URL %s", url)
+            _LOGGER.info("Making API call on URL %s", url)
             api = requests.get(url, timeout=10)
         except OSError:
             _LOGGER.warning("Host %s is not available", self.host)
@@ -77,3 +77,4 @@ class EmbyClient:
             self.ssl, self.host, self.port, itemId, imageType
         )
         return url
+            
