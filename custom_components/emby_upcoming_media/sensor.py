@@ -159,7 +159,7 @@ class EmbyUpcomingMediaSensor(Entity):
             card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
 
             if "PremiereDate" in show:
-                card_item["release"] = dateutil.parser.isoparse(show.get("PremiereDate", "")).year
+                card_item["release"] = str(dateutil.parser.isoparse(show.get("PremiereDate", "")).year)
             else:
                 card_item["release"] = ""
 
@@ -206,7 +206,7 @@ class EmbyUpcomingMediaSensor(Entity):
             card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
 
             if "PremiereDate" in show:
-                card_item["release"] = dateutil.parser.isoparse(show.get("PremiereDate", "")).year
+                card_item["release"] = str(dateutil.parser.isoparse(show.get("PremiereDate", "")).year)
 
             if show["ChildCount"] > 1:
                 card_item['number'] = "{0} seasons".format(
@@ -264,7 +264,7 @@ class EmbyUpcomingMediaSensor(Entity):
             card_item["airdate"] = show.get("PremiereDate", datetime.now().isoformat())
 
             if "PremiereDate" in show:
-                card_item["release"] = dateutil.parser.isoparse(show.get("PremiereDate", "")).year
+                card_item["release"] = str(dateutil.parser.isoparse(show.get("PremiereDate", "")).year)
 
             if "RunTimeTicks" in show:
                 timeobject = timedelta(microseconds=show["RunTimeTicks"] / 10)
@@ -322,7 +322,7 @@ class EmbyUpcomingMediaSensor(Entity):
             if "Genres" in show:
                 card_item["genres"] = ", ".join(show["Genres"][:3])
 
-            card_item["release"] = show.get("ProductionYear", "")
+            card_item["release"] = str(show.get("ProductionYear", ""))
             
             if "ParentIndexNumber" in show and "IndexNumber" in show:
                 card_item["number"] = "S{:02d}E{:02d}".format(
